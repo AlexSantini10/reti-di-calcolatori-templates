@@ -2,6 +2,7 @@
     "conventionalCommits.scopes": [
         "C_TCP",
         "JavaLib",
-        "CLib"
+        "CLib",
+        "Templates"
     ]
 }
