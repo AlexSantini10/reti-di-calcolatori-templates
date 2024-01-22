@@ -5,24 +5,30 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-int openFile(const char *filename, const char *mode) {
+int openFile(const char *filename, const char *mode)
+{
     FILE *file = fopen(filename, mode);
-    if (file == NULL) {
+    if (file == NULL)
+    {
         handleError("Errore durante l'apertura del file");
         return -1; // Restituisce -1 in caso di errore
     }
     return fileno(file); // Restituisce il descrittore di file associato
 }
 
-void closeFile(int fileDescriptor) {
-    if (close(fileDescriptor) == -1) {
+void closeFile(int fileDescriptor)
+{
+    if (close(fileDescriptor) == -1)
+    {
         handleError("Errore durante la chiusura del file");
     }
 }
 
-char *readFileToString(const char *filename) {
+char *readFileToString(const char *filename)
+{
     FILE *file = fopen(filename, "r");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         handleError("Errore durante l'apertura del file");
         return NULL;
     }
@@ -32,7 +38,8 @@ char *readFileToString(const char *filename) {
     fseek(file, 0, SEEK_SET);
 
     char *content = (char *)malloc((fileSize + 1) * sizeof(char));
-    if (content == NULL) {
+    if (content == NULL)
+    {
         handleError("Errore durante l'allocazione della memoria");
         fclose(file);
         return NULL;
@@ -45,9 +52,11 @@ char *readFileToString(const char *filename) {
     return content;
 }
 
-void writeStringToFile(const char *filename, const char *content) {
+void writeStringToFile(const char *filename, const char *content)
+{
     FILE *file = fopen(filename, "w");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         handleError("Errore durante l'apertura del file");
         return;
     }
@@ -56,9 +65,11 @@ void writeStringToFile(const char *filename, const char *content) {
     fclose(file);
 }
 
-size_t readFileToBuffer(const char *filename, void *buffer, size_t bufferSize) {
+size_t readFileToBuffer(const char *filename, void *buffer, size_t bufferSize)
+{
     FILE *file = fopen(filename, "rb");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         handleError("Errore durante l'apertura del file");
         return 0;
     }
@@ -69,9 +80,11 @@ size_t readFileToBuffer(const char *filename, void *buffer, size_t bufferSize) {
     return bytesRead;
 }
 
-void writeBufferToFile(const char *filename, const void *buffer, size_t bufferSize) {
+void writeBufferToFile(const char *filename, const void *buffer, size_t bufferSize)
+{
     FILE *file = fopen(filename, "wb");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         handleError("Errore durante l'apertura del file");
         return;
     }
@@ -80,24 +93,30 @@ void writeBufferToFile(const char *filename, const void *buffer, size_t bufferSi
     fclose(file);
 }
 
-void seekFile(int fileDescriptor, long offset, int whence) {
-    if (lseek(fileDescriptor, offset, whence) == -1) {
+void seekFile(int fileDescriptor, long offset, int whence)
+{
+    if (lseek(fileDescriptor, offset, whence) == -1)
+    {
         handleError("Errore durante lo spostamento nel file");
     }
 }
 
-int fileExists(const char *filename) {
+int fileExists(const char *filename)
+{
     FILE *file = fopen(filename, "r");
-    if (file != NULL) {
+    if (file != NULL)
+    {
         fclose(file);
         return 1; // Restituisce 1 se il file esiste
     }
     return 0; // Restituisce 0 se il file non esiste
 }
 
-size_t getFileSize(const char *filename) {
+size_t getFileSize(const char *filename)
+{
     FILE *file = fopen(filename, "r");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         handleError("Errore durante l'apertura del file");
         return 0;
     }
@@ -109,27 +128,33 @@ size_t getFileSize(const char *filename) {
     return fileSize;
 }
 
-int isDirectory(const char *path) {
+int isDirectory(const char *path)
+{
     // Implementazione semplificata: verifica se il percorso termina con un separatore di directory
     size_t pathLength = strlen(path);
-    if (pathLength > 0 && (path[pathLength - 1] == '/' || path[pathLength - 1] == '\\')) {
+    if (pathLength > 0 && (path[pathLength - 1] == '/' || path[pathLength - 1] == '\\'))
+    {
         return 1; // Restituisce 1 se il percorso è una directory
     }
     return 0; // Restituisce 0 se il percorso non è una directory
 }
 
-void handleError(const char *errorMessage) {
+void handleError(const char *errorMessage)
+{
     perror(errorMessage);
 }
 
-char *getAbsolutePath(const char *relativePath) {
+char *getAbsolutePath(const char *relativePath)
+{
     // Implementazione semplificata: restituisce il percorso relativo come percorso assoluto
     return realpath(relativePath, NULL);
 }
 
-char *readLineFromFile(const char *filename) {
+char *readLineFromFile(const char *filename)
+{
     FILE *file = fopen(filename, "r");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         handleError("Errore durante l'apertura del file");
         return NULL;
     }
@@ -137,7 +162,8 @@ char *readLineFromFile(const char *filename) {
     char *line = NULL;
     size_t len = 0;
 
-    if (getline(&line, &len, file) == -1) {
+    if (getline(&line, &len, file) == -1)
+    {
         handleError("Errore durante la lettura della linea");
         free(line);
         fclose(file);
@@ -148,9 +174,11 @@ char *readLineFromFile(const char *filename) {
     return line;
 }
 
-void writeLineToFile(const char *filename, const char *line) {
+void writeLineToFile(const char *filename, const char *line)
+{
     FILE *file = fopen(filename, "a");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         handleError("Errore durante l'apertura del file");
         return;
     }
@@ -159,22 +187,48 @@ void writeLineToFile(const char *filename, const char *line) {
     fclose(file);
 }
 
-int createDirectory(const char *path) {
+int createDirectory(const char *path)
+{
     // Implementazione semplificata: crea la directory se non esiste
-    if (mkdir(path, 0777) == -1) {
+    if (mkdir(path, 0777) == -1)
+    {
         handleError("Errore durante la creazione della directory");
         return 0; // Restituisce 0 se si verifica un errore
     }
     return 1; // Restituisce 1 se la directory è stata creata con successo
 }
 
-int removeDirectory(const char *path) {
+int removeDirectory(const char *path)
+{
     // Implementazione semplificata: rimuove la directory vuota
-    if (rmdir(path) == -1) {
+    if (rmdir(path) == -1)
+    {
         handleError("Errore durante la rimozione della directory");
         return 0; // Restituisce 0 se si verifica un errore
     }
     return 1; // Restituisce 1 se la directory è stata rimossa con successo
+}
+
+// Renames a file or directory
+int renameFile(const char *oldFilename, const char *newFilename)
+{
+    if (rename(oldFilename, newFilename) == -1)
+    {
+        handleError("Errore durante la rinomina del file/directory");
+        return 0; // Restituisce 0 se si verifica un errore
+    }
+    return 1; // Restituisce 1 se la rinomina è stata effettuata con successo
+}
+
+// Deletes a file
+int deleteFile(const char *filename)
+{
+    if (remove(filename) == -1)
+    {
+        handleError("Errore durante l'eliminazione del file");
+        return 0; // Restituisce 0 se si verifica un errore
+    }
+    return 1; // Restituisce 1 se l'eliminazione è stata effettuata con successo
 }
 
 #endif /* MYFILESUNIX_H */

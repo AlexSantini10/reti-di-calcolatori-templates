@@ -5,23 +5,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-int getRandomInt(int min, int max) {
+int getRandomInt(int min, int max)
+{
     return (rand() % (max - min + 1)) + min;
 }
 
-double getRandomDouble(double min, double max) {
+double getRandomDouble(double min, double max)
+{
     return ((double)rand() / RAND_MAX) * (max - min) + min;
 }
 
-bool getRandomBoolean() {
+bool getRandomBoolean()
+{
     return rand() % 2 == 0;
 }
 
-char* getRandomString(int len) {
+char *getRandomString(int len)
+{
     const char chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    char* result = (char*)malloc((len + 1) * sizeof(char));
+    char *result = (char *)malloc((len + 1) * sizeof(char));
 
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++)
+    {
         result[i] = chars[rand() % (sizeof(chars) - 1)];
     }
 
@@ -29,10 +34,12 @@ char* getRandomString(int len) {
     return result;
 }
 
-char* getRandomStringCustom(int len, const char* chars) {
-    char* result = (char*)malloc((len + 1) * sizeof(char));
+char *getRandomStringCustom(int len, const char *chars)
+{
+    char *result = (char *)malloc((len + 1) * sizeof(char));
 
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++)
+    {
         result[i] = chars[rand() % strlen(chars)];
     }
 
