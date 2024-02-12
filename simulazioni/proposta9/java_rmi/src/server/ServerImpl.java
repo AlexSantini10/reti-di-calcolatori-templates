@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
 
 public class ServerImpl implements RemoteServer, Serializable {
 
-	public static String USAGE = "Utilizzo: ServerImpl <port>";
+	public static final String USAGE = "Utilizzo: ServerImpl <port>";
 	
 	public static void main(String[] args) {
 		
@@ -44,12 +44,15 @@ public class ServerImpl implements RemoteServer, Serializable {
 	public String[] lista_nomi_file_contenenti_parola_in_linea(String nome_dir, String parola) throws RemoteException {
 		File dir = new File(nome_dir);
 		
+		// Controlli sulla dir
+		if (!dir.exists() || !dir.isDirectory()) 
+			return null;
+		
 		File[] files = dir.listFiles();
 		String[] nomi_file = new String[files.length];
 		int cont = 0;
 		
 		for (int i=0; i<files.length; i++) {
-			FileReader fr;
 			String fileContent = "";
 			
 			try {
@@ -70,8 +73,25 @@ public class ServerImpl implements RemoteServer, Serializable {
 
 	@Override
 	public int conta_numero_linee(String nome_file, String parola) throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
+		File file = new File(nome_file);
+		
+		if (!file.exists() || !file.isFile())
+			return 0;
+		
+		int cont = 0;
+		
+		String[] fileContent = null;
+        try {
+            fileContent = new String(Files.readAllBytes(Paths.get(nome_file))).split("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		for (int i=0; i<fileContent.length; i++) {
+			if (fileContent[i].contains(parola)) cont++;
+		}
+		
+		return cont;
 	}
 
 }
