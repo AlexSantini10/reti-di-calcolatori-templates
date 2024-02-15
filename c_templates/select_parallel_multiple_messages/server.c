@@ -76,10 +76,6 @@ int main(int argc, char *argv[])
     int client_socket;
     pid_t child_pid;
 
-    // Variabili per la gestione delle connessioni TCP
-    struct sockaddr_in client_addr;
-    socklen_t client_len = sizeof(client_addr);
-
     // Notifica l'avvenuta creazione dei socket e l'attesa di connessioni
     printf("Server in ascolto su %s:%d\n", inet_ntoa(server_addr.sin_addr), ntohs(server_addr.sin_port));
 
@@ -101,6 +97,10 @@ int main(int argc, char *argv[])
         // Connessione TCP
         if (FD_ISSET(tcp_socket, &read_fds))
         {
+            // Variabili per la gestione delle connessioni TCP
+            struct sockaddr_in client_addr;
+            socklen_t client_len = sizeof(client_addr);
+
             // Accetta una nuova connessione TCP
             client_socket = accept(tcp_socket, (struct sockaddr *)&client_addr, &client_len);
             if (client_socket == -1)
@@ -129,21 +129,25 @@ int main(int argc, char *argv[])
 
                 char buffer[MAX_BUFFER_SIZE];
 
-                // Ricevi i dati dal client
-                int received_bytes = recv(client_socket, buffer, sizeof(buffer), 0);
+                // Ciclo di gestione dei messaggi TCP
+                while (1){
+                    // Ricevi i dati dal client
+                    int received_bytes = recv(client_socket, buffer, sizeof(buffer), 0);
 
-                if (received_bytes > 0 && received_bytes < sizeof(buffer))
-                    buffer[received_bytes] = '\0';
-                else{
-                    // Connessione chiusa dal client
-                    printf("[server TCP] (Client %s:%d) Connessione chiusa dal client\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-                    close(client_socket);
-                    exit(EXIT_SUCCESS);
+                    if (received_bytes > 0 && received_bytes < sizeof(buffer))
+                        buffer[received_bytes] = '\0';
+                    else{
+                        // Connessione chiusa dal client
+                        printf("[server TCP] (Client %s:%d) Connessione chiusa dal client\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+                        close(client_socket);
+                        exit(EXIT_SUCCESS);
+                    }
+
+                    printf("[server TCP] (Client %s:%d) Ricevuto: %s\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port), buffer);
+
+                    send(client_socket, buffer, sizeof(buffer), 0);
                 }
 
-                printf("[server TCP] Ricezione dal client: %s\n", buffer);
-
-                send(client_socket, "Hello, client!", 14, 0);
 
                 // Chiudi la connessione
                 close(client_socket);
@@ -169,14 +173,14 @@ int main(int argc, char *argv[])
             char buffer[MAX_BUFFER_SIZE];
 
             // Ricevi i dati dal client per UDP // TODO: Spostare fuori dal while
-            struct sockaddr client_addr;
+            struct sockaddr_in client_addr;
             socklen_t client_len = sizeof(client_addr);
 
             int received_bytes = recvfrom(udp_socket, buffer, sizeof(buffer), 0, (struct sockaddr *)&client_addr, &client_len);
 
             if (received_bytes > 0 && received_bytes < sizeof(buffer))
                 buffer[received_bytes] = '\0';
-            printf("[server UDP] Ricezione dal client: %s\n", buffer);
+            printf("[server UDP] (Client %s:%d) Ricezione dal client: %s\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port), buffer);
 
             sendto(udp_socket, "Hello, client!", 14, 0, (struct sockaddr *)&client_addr, client_len);
         }

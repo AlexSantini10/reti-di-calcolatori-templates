@@ -53,31 +53,34 @@ int main(int argc, char *argv[])
 
     // TODO: Implementare la comunicazione con il server
 
-    // Chiedi all'utente di inserire un messaggio
-    printf("Inserisci un messaggio: ");
-    fgets(message, MAX_BUFFER_SIZE, stdin);
-    message[strlen(message) - 1] = '\0';
+    // Ciclo di comunicazione con il server
+    while (1) {
+        // Chiedi all'utente di inserire un messaggio
+        printf("Inserisci un messaggio: ");
+        fgets(message, MAX_BUFFER_SIZE, stdin);
+        message[strlen(message) - 1] = '\0';
 
-    // Send data to the server
-    sendto(client_socket, message, strlen(message), 0, (struct sockaddr *)&server_addr, sizeof(server_addr));
+        // Send data to the server
+        sendto(client_socket, message, strlen(message), 0, (struct sockaddr *)&server_addr, sizeof(server_addr));
 
-    printf("Inviato al server: %s\n", message);
+        printf("Inviato al server: %s\n", message);
 
-    char buffer[MAX_BUFFER_SIZE];
-    struct sockaddr_in client_addr;
-    socklen_t client_addr_len = sizeof(client_addr);
+        char buffer[MAX_BUFFER_SIZE];
+        struct sockaddr_in client_addr;
+        socklen_t client_addr_len = sizeof(client_addr);
 
-    // Receive data from the server
-    ssize_t received_bytes = recvfrom(client_socket, buffer, sizeof(buffer), 0, (struct sockaddr *)&client_addr, &client_addr_len);
-    if (received_bytes > 0)
-    {
-        buffer[received_bytes] = '\0';
-        printf("Dati ricevuti dal server: %s\n", buffer);
-    }
-    else
-    {
-        perror("Failed to receive data from server");
-    }
+        // Receive data from the server
+        ssize_t received_bytes = recvfrom(client_socket, buffer, sizeof(buffer), 0, (struct sockaddr *)&client_addr, &client_addr_len);
+        if (received_bytes > 0)
+        {
+            buffer[received_bytes] = '\0';
+            printf("Dati ricevuti dal server: %s\n", buffer);
+        }
+        else
+        {
+            perror("Failed to receive data from server");
+        }
+    } // while
 
     // Fine della comunicazione con il server
 

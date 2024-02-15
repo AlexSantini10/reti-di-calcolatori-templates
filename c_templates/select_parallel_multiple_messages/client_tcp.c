@@ -60,29 +60,33 @@ int main(int argc, char *argv[])
     printf("Connessione al server eseguita %s:%d\n", server_ip, port);
 
     // TODO: Implementare la comunicazione con il server
+
+    // Ciclo di comunicazione con il server
+    while (1){
+        // Chiedi all'utente di inserire un messaggio
+        printf("Inserisci un messaggio: ");
+        fgets(message, MAX_BUFFER_SIZE, stdin);
+
+        // Send data to the server
+        send(client_socket, message, strlen(message), 0);
+
+        printf("Inviato al server: %s\n", message);
+
+        char buffer[MAX_BUFFER_SIZE];
+
+        // Receive data from the server
+        ssize_t received_bytes = recv(client_socket, buffer, sizeof(buffer), 0);
+        if (received_bytes > 0)
+        {
+            buffer[received_bytes] = '\0';
+            printf("Dati ricevuti dal server: %s\n", buffer);
+        }
+        else
+        {
+            printf("Nessun dato ricevuto dal server\n");
+        }
+    } // while
     
-    // Chiedi all'utente di inserire un messaggio
-    printf("Inserisci un messaggio: ");
-    fgets(message, MAX_BUFFER_SIZE, stdin);
-
-    // Send data to the server
-    send(client_socket, message, strlen(message), 0);
-
-    printf("Inviato al server: %s\n", message);
-
-    char buffer[MAX_BUFFER_SIZE];
-
-    // Receive data from the server
-    ssize_t received_bytes = recv(client_socket, buffer, sizeof(buffer), 0);
-    if (received_bytes > 0)
-    {
-        buffer[received_bytes] = '\0';
-        printf("Dati ricevuti dal server: %s\n", buffer);
-    }
-    else
-    {
-        printf("Nessun dato ricevuto dal server\n");
-    }
 
     // Fine della comunicazione con il server
 
