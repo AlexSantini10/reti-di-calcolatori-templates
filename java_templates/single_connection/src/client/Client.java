@@ -9,24 +9,7 @@ import java.net.Socket;
 
 public class Client {
 
-    private static void printUsage() {
-        System.out.println("Usage: java Client <address> <port>");
-        System.out.println("1024 <= port <= 65535");
-    }
-
-    private static void printError(String info, Exception e) {
-        System.out.println("[Client Error] " + info);
-        e.printStackTrace();
-    }
-
-    private static void printError(Exception e) {
-        System.out.println("[Client Error] ");
-        e.printStackTrace();
-    }
-
-    private static void printInfo(String info) {
-        System.out.println("[Client] " + info);
-    }
+    public static final String USAGE = "Usage: java Client <address> <port> \n1024 <= port <= 65535";
     
     public static void main(String[] args) {
         InetAddress addr = null;
@@ -40,11 +23,11 @@ public class Client {
                 addr = InetAddress.getByName(args[0]);
                 port = Integer.parseInt(args[1]);
                 if (port < 1024 || port > 65535) {
-                    printUsage();
+                    System.out.println(USAGE);
                     System.exit(1);
                 }
             } else {
-                printUsage();
+                System.out.println(USAGE);
                 System.exit(1);
             }
         } catch (Exception e) {
@@ -73,7 +56,8 @@ public class Client {
             dataInput = new DataInputStream(socket.getInputStream());
             dataOutput = new DataOutputStream(socket.getOutputStream());
         } catch (Exception e) {
-            printError("Errore nella connessione al server", e);
+            System.out.println("Problemi nella creazione degli stream di input/output: ");
+            e.printStackTrace();
             return;
         }
 
@@ -83,17 +67,18 @@ public class Client {
                 // Leggo il messaggio
                 System.out.println("Inserisci un messaggio: ");
                 String message = stdIn.readLine();
-                printInfo("Messaggio inviato: " + message);
+                System.out.println("Messaggio inserito: " + message);
 
                 // Invio il messaggio
                 dataOutput.writeUTF(message);
 
                 // Leggo la risposta
                 String response = dataInput.readUTF();
-                printInfo("Risposta ricevuta: " + response);
+                System.out.println("Risposta: " + response);
             }
         } catch (Exception e) {
-            printError(e);
+            System.out.println("Errore durante la comunicazione con il server: ");
+            e.printStackTrace();
         }
         finally {
             try {
@@ -101,7 +86,8 @@ public class Client {
                 dataOutput.close();
                 socket.close();
             } catch (Exception e) {
-                printError(e);
+                System.out.println("Errore durante la chiusura della connessione: ");
+                e.printStackTrace();
             }
         }
     }

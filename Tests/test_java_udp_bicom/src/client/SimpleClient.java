@@ -1,0 +1,77 @@
+package client;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+
+public class SimpleClient {
+	
+	// Costanti argomenti
+	static final int N_ARGS = 2;
+	static final String COMMAND = "SimpleClient <serverIP> <serverPort>";
+
+	public static void main(String[] args) {
+		
+		// Check degli argomenti
+		if (args.length != N_ARGS) {
+			System.out.println("Errore negli argomenti, utilizzo: " + COMMAND);
+			System.exit(1);
+		}
+		
+		String serverIP = args[0];
+		
+		// Argomento <port>
+		int serverPort = 6000;
+		try {
+			serverPort = Integer.valueOf(args[1]);
+		}
+		catch (NumberFormatException e) {
+			System.out.println("Errore, <serverPort> deve essere un intero");
+			System.exit(2);
+		}
+
+		// Creazione socket
+		try {
+			DatagramSocket socket = new DatagramSocket();
+			
+			InetAddress serverAddress = InetAddress.getByName(serverIP);
+			
+			// Dati da inviare
+			String messageToSend = "Ciao, server!";
+			
+			for (int i=0; i<1000; i++)
+				messageToSend += " GIGIONE ";
+			
+			byte[] sendData = messageToSend.getBytes();
+			
+			// Creazione pacchetto di invio dati
+			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, serverAddress, serverPort);
+			
+			System.out.println(messageToSend);
+			// Invio dati
+			socket.send(sendPacket);
+			System.out.println("Dati inviati al server");
+
+			// Buffer dati in entrata
+			byte[] receiveData = new byte[1024];
+			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
+			// Ricezione dati
+			System.out.println("In attesa di dati...");
+			socket.receive(receivePacket);
+
+			// Estrazione dati
+			String receivedMessage = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
+			System.out.println("Dati ricevuti: " + receivedMessage);
+
+			// Chiusura socket
+			socket.close();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+}
